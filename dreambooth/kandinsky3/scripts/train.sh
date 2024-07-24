@@ -9,7 +9,7 @@
 
 source deactivate
 source activate aschumachenko
-wandb login 04971049ca813b25cd6db3d781313e4ea63ffd0f
+wandb login <...>
 
 concept=${1}            # dog6
 superclass=${2}         # dog
