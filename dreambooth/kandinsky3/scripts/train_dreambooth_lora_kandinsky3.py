@@ -1066,11 +1066,11 @@ def main(args):
     accelerator.register_save_state_pre_hook(save_model_hook)
     accelerator.register_load_state_pre_hook(load_model_hook)
 
-    if movq is not None:
-        movq.requires_grad_(False)
+    # if movq is not None:
+    movq.requires_grad_(False)
 
-    if not args.train_text_encoder:
-        text_encoder.requires_grad_(False)
+    # if not args.train_text_encoder:
+    text_encoder.requires_grad_(False)
 
     unet.requires_grad_(False)
 
@@ -1091,9 +1091,6 @@ def main(args):
                 lora_attn_procs[name + '.processor'].requires_grad_(False)
 
     unet.set_attn_processor(lora_attn_procs)
-    save_path = os.path.join(args.output_dir, 'unet.bin')
-    torch.save(unet.state_dict(), save_path)
-    unet.load_state_dict(torch.load(save_path))
     lora_layers = AttnProcsLayers(unet.attn_processors)
 
     # for name, param in unet.named_parameters():
@@ -1337,9 +1334,9 @@ def main(args):
     )
 
     for epoch in range(first_epoch, args.num_train_epochs):
-        unet.train()
-        if args.train_text_encoder:
-            text_encoder.train()
+        # unet.train()
+        # if args.train_text_encoder:
+        #     text_encoder.train()
         for step, batch in enumerate(train_dataloader):
             with accelerator.accumulate(unet):
                 pixel_values = batch["pixel_values"].to(dtype=weight_dtype)
@@ -1347,7 +1344,7 @@ def main(args):
                 if movq is not None:
                     # Convert images to latent space
                     model_input = movq.encode(batch["pixel_values"].to(dtype=weight_dtype)).latents  # .latent_dist.sample()
-                    model_input = model_input * movq.config.scaling_factor
+                    # model_input = model_input * movq.config.scaling_factor
                 else:
                     model_input = pixel_values
 
